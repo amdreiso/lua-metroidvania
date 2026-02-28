@@ -1,0 +1,97 @@
+
+local utils = require("utils")
+local Level = {}
+
+Level.LayerType = {
+	INSTANCES = 0,
+	TILESET = 1,
+}
+local LayerType = Level.LayerType
+
+local LAYER_COMPONENTS = {}
+
+LAYER_COMPONENTS[ LayerType.INSTANCES ] = {
+	instances = {},
+	createInstance = function(instances, inst)
+		table.insert(instances, inst)
+		print("Instance " .. inst.name .. " created at (" .. inst.x .. "," .. inst.y .. ")")
+	end,
+}
+
+LAYER_COMPONENTS[ LayerType.TILESET ] = {
+}
+
+function Level.layer(depth, layerType)
+	local layer = {}
+
+	-- default components of every layer
+	layer.depth = depth
+	layer.layerType = layerType or Level.LayerType.INSTANCES
+
+	-- additional components
+	utils.merge(layer, LAYER_COMPONENTS[ layerType ])
+
+	return layer
+end
+
+function Level.layerGet(level, name)
+	if level.layers[name] == nil then
+		print("layer" .. name .. "doesn't exist in " .. level.name)
+	end
+	return level.layers[name]
+end
+
+function Level.create(name, components)
+	local level = {}
+	local cmp = components or {}
+
+	level.name = name or "level name"
+	level.layers = {}
+
+	utils.merge(level, cmp)
+
+	-- Layer stuff
+	function level.layerCreate(layername, layer)
+		level.layers[layername] = layer
+
+		table.sort(level.layers, function(a, b)
+			return a.depth < b.depth
+		end)
+	end
+
+	return level
+end
+
+function Level.drawInstances(instances)
+	for _, inst in pairs(instances) do
+		inst:draw()
+	end
+end
+
+function Level.updateInstances(instances, dt)
+	for _, inst in pairs(instances) do
+		inst:update(dt)
+	end
+end
+
+function Level.drawTileSet()
+end
+
+function Level.draw(level)
+	for _, layer in pairs(level.layers) do
+		if layer.layerType == LayerType.INSTANCES then
+			Level.drawInstances(layer.instances)
+		end
+	end
+end
+
+function Level.update(level, dt)
+	for _, layer in pairs(level.layers) do
+		if layer.layerType == LayerType.INSTANCES then
+			Level.updateInstances(layer.instances, dt)
+		end
+	end
+end
+
+return Level
+
