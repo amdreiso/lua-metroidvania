@@ -1,10 +1,11 @@
 
 local utils 						= require("utils")
+local utf8							= require("utf8")
 local Level 						= require("level")
 local Enum 							= require("enum")
 local Global 						= require("global")
 local Console 					= require("console")
-local utf8							= require("utf8")
+
 local TERM_COLORS 			= Global.TERM_COLORS
 
 local FLAGS = {}
@@ -42,7 +43,7 @@ function love.draw()
 	Console.draw()
 end
 
-function love.keypressed(key, scancode)
+function love.keypressed(key)
 	if key == "tab" then
 		Global.CONSOLE = not Global.CONSOLE
 		Console.input = ""
@@ -51,6 +52,9 @@ function love.keypressed(key, scancode)
 
 	if Global.CONSOLE then
 		if key == "backspace" then
+			if love.keyboard.isDown("lctrl") then
+				Console.input = ""
+			end
 			local byteoffset = utf8.offset(Console.input, -1)
 			if byteoffset then
 				Console.input = string.sub(Console.input, 1, byteoffset - 1)
