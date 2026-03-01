@@ -1,5 +1,7 @@
 
 local utils = require("utils")
+local Enum = require("enum")
+
 local Level = {
 	current = nil,
 }
@@ -13,7 +15,7 @@ function Level.instanceGetAll(name, level)
 	local l = level or Level.current
 	local instances = {}
 	for _, layer in pairs(l.layers) do
-		if layer.layerType == Level.LayerType.INSTANCES then
+		if layer.layerType == Enum.LAYER_TYPE.INSTANCES then
 			for _, inst in ipairs(layer.instances) do
 				if inst.name == name then
 					table.insert(instances, inst)
@@ -25,15 +27,9 @@ function Level.instanceGetAll(name, level)
 end
 
 -- Layers
-Level.LayerType = {
-	INSTANCES = 0,
-	TILESET = 1,
-}
-local LayerType = Level.LayerType
-
 local LAYER_COMPONENTS = {}
 
-LAYER_COMPONENTS[ LayerType.INSTANCES ] = {
+LAYER_COMPONENTS[ Enum.LAYER_TYPE.INSTANCES ] = {
 	instances = {},
 	createInstance = function(layer, inst)
 		table.insert(layer.instances, inst)
@@ -41,7 +37,7 @@ LAYER_COMPONENTS[ LayerType.INSTANCES ] = {
 	end,
 }
 
-LAYER_COMPONENTS[ LayerType.TILESET ] = {
+LAYER_COMPONENTS[ Enum.LAYER_TYPE.TILESET ] = {
 }
 
 function Level.layer(depth, layerType)
@@ -105,7 +101,7 @@ end
 
 function Level.draw(level)
 	for _, layer in ipairs(level.render) do
-		if layer.layerType == LayerType.INSTANCES then
+		if layer.layerType == Enum.LAYER_TYPE.INSTANCES then
 			Level.drawInstances(layer.instances)
 		end
 	end
@@ -113,7 +109,7 @@ end
 
 function Level.update(level, dt)
 	for _, layer in ipairs(level.render) do
-		if layer.layerType == LayerType.INSTANCES then
+		if layer.layerType == Enum.LAYER_TYPE.INSTANCES then
 			Level.updateInstances(layer.instances, dt)
 		end
 	end

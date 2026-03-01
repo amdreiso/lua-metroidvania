@@ -47,6 +47,7 @@ end
 
 function Player:jump()
 	if not self.onGround then return end
+	self.vsp = 0
 	self.vsp = self.vsp - self.jumpForce
 	self.onGround = false
 end
@@ -79,8 +80,9 @@ function Player:draw()
 	local hw = self.hitbox.width * self.xscale
 	local hh = self.hitbox.height * self.yscale
 
+	local sprite = love.graphics.newImage("textures/grass.png", {linear=true})
 	love.graphics.setColor({1, 1, 1})
-	love.graphics.rectangle("fill", self.x - hw / 2, self.y - hh / 2, hw, hh)
+	love.graphics.draw(sprite, self.x - hw / 2, self.y - hh / 2)
 
 	self:drawDebug()
 end

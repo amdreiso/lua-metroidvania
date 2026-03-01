@@ -53,10 +53,10 @@ function Instance:update(dt)
 end
 
 function Instance:drawDebug()
-	love.graphics.circle("fill", self.west, self.north, 2)
-	love.graphics.circle("fill", self.east, self.north, 2)
-	love.graphics.circle("fill", self.west, self.south, 2)
-	love.graphics.circle("fill", self.east, self.south, 2)
+	love.graphics.circle("fill", self.west, self.north, 1)
+	love.graphics.circle("fill", self.east, self.north, 1)
+	love.graphics.circle("fill", self.west, self.south, 1)
+	love.graphics.circle("fill", self.east, self.south, 1)
 end
 
 function Instance:draw()
