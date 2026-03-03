@@ -11,6 +11,19 @@ function Level.load(level)
 	-- TODO: all the other shit
 end
 
+function Level.instanceGet(name, level)
+	local l = level or Level.current
+	local instance = nil
+	for _, layer in pairs(l.layers) do
+		for _, inst in ipairs(layer.instances) do
+			if inst.name == name then
+				instance = inst
+			end
+		end
+	end
+	return instance
+end
+
 function Level.instanceGetAll(name, level)
 	local l = level or Level.current
 	local instances = {}

@@ -5,6 +5,7 @@ local Level 						= require("level")
 local Enum 							= require("enum")
 local Global 						= require("global")
 local Console 					= require("console")
+local Camera 						= require("camera")
 
 local TERM_COLORS 			= Global.TERM_COLORS
 
@@ -25,9 +26,18 @@ local function RunFlags()
 	end
 end
 
+local camera = Camera.new()
+
 function love.load()
 	RunFlags()
-	if Global.GAME_STATE == Enum.GAME_STATE.GAME then Level.load(require("levels.level_template")) end
+	if Global.GAME_STATE == Enum.GAME_STATE.GAME then
+		Level.load(require("levels.level_template"))
+
+		local player = Level.instanceGet("player")
+		if player ~= nil then
+			camera:target(player)
+		end
+	end
 
 	local font = love.graphics.newFont("fonts/SauceCodeProNerdFontMono-Regular.ttf", 12)
 	love.graphics.setFont(font)
@@ -35,11 +45,22 @@ end
 
 function love.update(dt)
 	if Global.GAME_STATE == Enum.GAME_STATE.GAME then Level.update(Level.current, dt) end
+
+	camera:update(dt)
 end
 
 function love.draw()
-	if Global.GAME_STATE == Enum.GAME_STATE.GAME then Level.draw(Level.current) end
 
+	-- draw everything according to camera's position
+	camera:apply()
+
+	if Global.GAME_STATE == Enum.GAME_STATE.GAME then
+		Level.draw(Level.current)
+	end
+
+	camera:reset()
+
+	-- debug stuff
 	Console.draw()
 end
 
